@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "748352726052",
+    "firebase_url": "https://flagcapitalquiz.firebaseio.com",
+    "project_id": "flagcapitalquiz",
+    "storage_bucket": "flagcapitalquiz.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:748352726052:android:658f5759a1d5fac9",
+        "android_client_info": {
+          "package_name": "cs.apps.obg"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "748352726052-894vv78i7iflj0cvk63t2vprpmj1ajth.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBq9nwKUZ46ssDJ1SDrUcyRMGvFdyVuyAk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
