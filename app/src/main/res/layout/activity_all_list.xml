@@ -54,13 +54,13 @@
                     android:text="Continent"
                     android:textSize="25dp"
                     android:gravity="center"
-                    android:layout_weight="2"/>
+                    android:layout_weight="1"/>
                 <TextView
                     android:id="@+id/detail_continent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="25dp"
-                    android:gravity="center"
+                    android:gravity="left"
                     android:textColor="#1b1fff"
                     android:layout_weight="1"
                     android:text="Continent"/>
@@ -76,13 +76,13 @@
                     android:text="Country"
                     android:textSize="25dp"
                     android:gravity="center"
-                    android:layout_weight="2"/>
+                    android:layout_weight="1"/>
                 <TextView
                     android:id="@+id/detail_country"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="25dp"
-                    android:gravity="center"
+                    android:gravity="left"
                     android:textColor="#1b1fff"
                     android:layout_weight="1"
                     android:text="Country"/>
@@ -97,13 +97,13 @@
                     android:text="Capital"
                     android:textSize="25dp"
                     android:gravity="center"
-                    android:layout_weight="2"/>
+                    android:layout_weight="1"/>
                 <TextView
                     android:id="@+id/detail_capital"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="25dp"
-                    android:gravity="center"
+                    android:gravity="left"
                     android:textColor="#1b1fff"
                     android:layout_weight="1"
                     android:text="Capital"/>
@@ -127,12 +127,30 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#d6f4f4e9" >
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/all_list"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="26dp"
+                    android:background="#4e6273">
+                    <TextView
+                        android:id="@+id/view_list_continent_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textColor="#e6e1e1"
+                        android:textSize="19dp"
+                        android:text="Continent"/>
+                </LinearLayout>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/all_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-            </android.support.v7.widget.RecyclerView>
+                </android.support.v7.widget.RecyclerView>
+            </LinearLayout>
         </FrameLayout>
 
         <ListView
@@ -140,7 +158,7 @@
             android:layout_width="240dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:background="#9a9b9f"
+            android:background="#f6ffffff"
             android:choiceMode="singleChoice"
             android:divider="@android:color/transparent"
             android:dividerHeight="0dp" />

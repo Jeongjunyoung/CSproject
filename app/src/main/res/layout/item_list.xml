@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
+    android:layout_marginTop="8dp"
     android:orientation="vertical">
     <LinearLayout
         android:id="@+id/continent_layout"
@@ -59,5 +60,18 @@
                 android:textColor="#583c36"
                 android:singleLine="true"/>
         </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="#c37c7b7b">
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#c3c6c2c2">
+
     </LinearLayout>
 </LinearLayout>

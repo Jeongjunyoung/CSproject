@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 
 import java.util.List;
+import java.util.Map;
 
 import cs.apps.obg.domain.RankingScoreVO;
 import cs.apps.obg.inter.LoadUserCallback;
@@ -58,9 +59,23 @@ public class UserServiceInterface {
         }
         return null;
     }
-    public void getUserScore() {
+    public Map<String, Integer> getFlagMap() {
         if (mService != null) {
-            mService.getUserScore();
+            return mService.getFlagMap();
+        }
+        return null;
+    }
+
+    public Map<String, Integer> getCapitalMap() {
+        if (mService != null) {
+            return mService.getCapitalMap();
+        }
+        return null;
+    }
+
+    public void setScoreMap() {
+        if (mService != null) {
+            mService.setScoreMap();
         }
     }
 }

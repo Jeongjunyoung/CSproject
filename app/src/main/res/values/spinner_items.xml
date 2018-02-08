@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="continent">
+        <item>ALL</item>
         <item>EUROPE</item>
         <item>ASIA &amp; OCEANIA</item>
         <item>AMERICA</item>

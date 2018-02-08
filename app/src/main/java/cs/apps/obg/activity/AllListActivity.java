@@ -26,6 +26,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 import cs.apps.obg.R;
@@ -40,7 +42,7 @@ public class AllListActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ArrayList<FlagVO> mItems;
     private LinearLayout detailLayout;
-    private TextView detailContinent, detailCountry, detailCapital;
+    private TextView detailContinent, detailCountry, detailCapital, viewContinent;
     private ImageView detailImage;
     private ImageButton detailCloseBtn;
     private ListView navList;
@@ -66,6 +68,7 @@ public class AllListActivity extends AppCompatActivity {
         navList.setOnItemClickListener(new DrawerItemClickListener());
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         dlDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         dtToggle = new ActionBarDrawerToggle(this, dlDrawer, R.string.app_name, R.string.app_name);
         dlDrawer.setDrawerListener(dtToggle);
 
@@ -89,7 +92,9 @@ public class AllListActivity extends AppCompatActivity {
         detailContinent = (TextView) findViewById(R.id.detail_continent);
         detailCountry = (TextView) findViewById(R.id.detail_country);
         detailImage = (ImageView) findViewById(R.id.detail_image);
+        viewContinent = (TextView) findViewById(R.id.view_list_continent_text);
         detailCloseBtn = (ImageButton) findViewById(R.id.detail_close_btn);
+        viewContinent.setText("Europe");
         mAdapter.setItemClick(new ListAdapter.ItemClick() {
             @Override
             public void onClick(View view, int position) {
@@ -133,27 +138,21 @@ public class AllListActivity extends AppCompatActivity {
         public void onItemClick(AdapterView<?> adapter, View view, int position, long id){
             switch(position){
                 case 0:
-                    Toast.makeText(AllListActivity.this,"Europe",Toast.LENGTH_SHORT).show();
                     setAllList(position+1);
                     break;
                 case 1:
-                    Toast.makeText(AllListActivity.this,"Asia",Toast.LENGTH_SHORT).show();
                     setAllList(position+1);
                     break;
                 case 2:
-                    Toast.makeText(AllListActivity.this,"Oceania",Toast.LENGTH_SHORT).show();
                     setAllList(position+1);
                     break;
                 case 3:
-                    Toast.makeText(AllListActivity.this,"America",Toast.LENGTH_SHORT).show();
                     setAllList(position+1);
                     break;
                 case 4:
-                    Toast.makeText(AllListActivity.this,"Africa",Toast.LENGTH_SHORT).show();
                     setAllList(position+1);
                     break;
                 case 5:
-                    Toast.makeText(AllListActivity.this,"Middle East",Toast.LENGTH_SHORT).show();
                     setAllList(position+1);
                     break;
             }
@@ -166,6 +165,7 @@ public class AllListActivity extends AppCompatActivity {
         mItems = db.selectAllData(position);
         mAdapter.setItems(mItems);
         mAdapter.notifyDataSetChanged();
+        viewContinent.setText(getContinentString(mItems.get(position).getContinentNum()));
         recyclerView.smoothScrollToPosition(0);
     }
 

@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cs.apps.obg.R;
 import cs.apps.obg.adapter.RankAdapter;
@@ -51,7 +52,7 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
     ImageView flagImage;
     LinearLayout rankingLayout, readyLayout;
     Button contents1, contents2, contents3, contents4, flagStart, flagBack, flagRestart, flagOut;
-    TextView goodAnswer, badAnswer, flagScore, flagTimer, flagCapital;
+    TextView goodAnswer, badAnswer, flagScore, flagTimer, flagCapital, highestScoreText, newHighestText;
     Spinner mSpinner;
     RecyclerView recyclerView;
     private int[] orderArr;
@@ -72,6 +73,7 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
     TimerUpdate thread;
     private RankAdapter rankAdapter;
     DBHelper dbHelper;
+    private Map<String, Integer> scoreMap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +84,9 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        myRef.removeEventListener(mChildEventListener);
+        if (mChildEventListener != null) {
+            myRef.removeEventListener(mChildEventListener);
+        }
     }
 
     private void initView() {
@@ -90,10 +94,12 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
         isFlagQuiz = intent.getBooleanExtra("flag_quiz", false);
         if (isFlagQuiz) {
             db_rankingKinds = "saving-data/ranking_flag";
+            scoreMap = UserApplication.getInstance().getServiceInterface().getFlagMap();
         } else {
             db_rankingKinds = "saving-data/ranking_capital";
+            scoreMap = UserApplication.getInstance().getServiceInterface().getCapitalMap();
         }
-
+        System.out.println("MAP >>> Europe Score : " + scoreMap.get("flag_europe_store"));
         recyclerView = (RecyclerView) findViewById(R.id.ranking_list);
         rankAdapter = new RankAdapter(this);
         recyclerView.setHasFixedSize(true);
@@ -105,7 +111,7 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
         //mUser = mAuth.getCurrentUser();
         //println("E-MAIL : "+mUser.getEmail()+", UID : "+mUser.getUid());
         UserApplication.getInstance().getServiceInterface().setUser();
-        UserApplication.getInstance().getServiceInterface().getUserScore();
+        //UserApplication.getInstance().getServiceInterface().getUserScore();
         dbHelper = new DBHelper(this);
         dbHelper.open();
         flagImage = (ImageView) findViewById(R.id.flag_image);
@@ -122,6 +128,8 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
         flagTimer = (TextView) findViewById(R.id.flag_timer);
         flagScore = (TextView) findViewById(R.id.flag_score);
         flagCapital = (TextView) findViewById(R.id.flag_capital);
+        highestScoreText = (TextView) findViewById(R.id.flag_highest_score);
+        //newHighestText = (TextView) findViewById(R.id.new_highest_score);
         rankingLayout = (LinearLayout) findViewById(R.id.flag_ranking_layout);
         readyLayout = (LinearLayout) findViewById(R.id.flag_ready_layout);
         if (isFlagQuiz) {
@@ -162,11 +170,12 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
                 flagMap.clear();
                 imageIds.clear();
                 readyLayout.setVisibility(View.GONE);
+                UserApplication.getInstance().getServiceInterface().setScoreMap();
                 String str = mSpinner.getSelectedItem().toString();
-                int position = mSpinner.getSelectedItemPosition()+1;
-                list = dbHelper.selectData(position);
-                continentNum = position;
+                continentNum = mSpinner.getSelectedItemPosition();
+                list = dbHelper.selectData(continentNum);
                 fTotalNum = list.size();
+                System.out.println("MAP >>> Europe Score : " + scoreMap.get(getContinentString(continentNum)));
                 orderArr = new int[fTotalNum];
                 for(int i=0;i<list.size();i++) {
                     int index = i+1;
@@ -186,11 +195,13 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.flag_restart:
                 rankingLayout.setVisibility(View.GONE);
                 readyLayout.setVisibility(View.VISIBLE);
+                newHighestText.setVisibility(View.GONE);
                 goodAnswer.setText(String.valueOf(0));
                 badAnswer.setText(String.valueOf(0));
                 isTimeOut = false;
                 break;
             case R.id.flag_out:
+                finish();
                 break;
         }
     }
@@ -257,7 +268,11 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
 
     private void quizShuffle() {
         int random = 0;
-        timeNum = 5;
+        if (continentNum == 0) {
+            timeNum = 35;
+        } else {
+            timeNum = 20;
+        }
         goodNum = 0;
         badNum = 0;
         boolean isOverlap;
@@ -336,22 +351,47 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private long getMaxScore() {
+        if (isFlagQuiz) {
+            scoreMap = UserApplication.getInstance().getServiceInterface().getFlagMap();
+        } else {
+            scoreMap = UserApplication.getInstance().getServiceInterface().getCapitalMap();
+        }
+        if (scoreMap.get(getContinentString(continentNum)) == null) {
+            return 0;
+        }
+        return (long) scoreMap.get(getContinentString(continentNum));
+    }
+
+    private long checkMaxScore(long score, long highestScore) {
+        long updateScore = 0;
+        if (score > highestScore) {
+            updateScore = score;
+            //newHighestText.setVisibility(View.VISIBLE);
+        } else if (score <= highestScore) {
+            updateScore = highestScore;
+        }
+        return updateScore;
+    }
     private void resultScore(int goodScore, int badScore) {
         long score = (goodScore*1573) - (badScore*372);
         if (score < 0) {
             score = 0;
         }
-        flagScore.setText("SCORE : " + String.valueOf(score));
+        long highestScore = getMaxScore();
+        long updateScore = checkMaxScore(score, highestScore);
+        highestScoreText.setText(String.valueOf(highestScore));
+        flagScore.setText(String.valueOf(score));
         DatabaseReference ref = database.getReference(db_rankingKinds);
         if (isFlagQuiz) {
             myRef.child(UserApplication.getInstance().getServiceInterface().getUID())
-                    .child("score").child("flag_store").child(getContinentString(continentNum)).setValue(score);
+                    .child("score").child("flag_store").child(getContinentString(continentNum)).setValue(updateScore);
         } else {
             myRef.child(UserApplication.getInstance().getServiceInterface().getUID())
-                    .child("score").child("capital_store").child(getContinentString(continentNum)).setValue(score);
+                    .child("score").child("capital_store").child(getContinentString(continentNum)).setValue(updateScore);
         }
         ref.child(getContinentString(continentNum)).child("values").
-                child(UserApplication.getInstance().getServiceInterface().getNickname()).setValue(score);
+                child(UserApplication.getInstance().getServiceInterface().getNickname()).setValue(updateScore);
         getRankingList(new LoadUserCallback() {
             @Override
             public void onUserLoaded(String str) {
@@ -377,6 +417,8 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
             str = "flag_america_store";
         } else if (position == 4) {
             str = "flag_africa_middleeast_store";
+        } else if (position == 0) {
+            str = "flag_all_store";
         }
         return str;
     }

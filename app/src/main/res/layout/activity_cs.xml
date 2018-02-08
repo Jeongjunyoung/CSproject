@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:background="#d9e4de"
     tools:context="cs.apps.obg.activity.CSActivity">
     <LinearLayout
         android:id="@+id/set_nickname_layout"
@@ -68,42 +69,79 @@
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="1">
-        <TextView
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textSize="50dp"
-            android:text="TITLE"
-            android:gravity="center"/>
+            android:layout_height="230dp"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center">
+            <ImageView
+                android:layout_width="330dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/zcs_top_image"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="top"
+            android:layout_gravity="center">
+            <Button
+                android:id="@+id/country_flag"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="국기    맞추기"
+                android:textColor="#000000"
+                android:background="@drawable/zbutton_shape"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="top"
+            android:layout_gravity="center">
+            <Button
+                android:id="@+id/country_capital"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="수도    맞추기"
+                android:textColor="#000000"
+                android:background="@drawable/zbutton_shape"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="top"
+            android:layout_gravity="center">
+            <Button
+                android:id="@+id/all_list_btn"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="세계 모든 국기/수도"
+                android:textColor="#000000"
+                android:background="@drawable/zbutton_shape"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="top"
+            android:layout_gravity="center">
+            <Button
+                android:id="@+id/google_sign_out"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="LOGOUT"
+                android:textColor="#000000"
+                android:background="@drawable/zbutton_shape"/>
+        </LinearLayout>
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="1">
-        <Button
-            android:id="@+id/country_flag"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="country_flag"/>
-        <Button
-            android:id="@+id/country_capital"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="country_capital"/>
-        <Button
-            android:id="@+id/all_list_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="ALL LIST"/>
-        <Button
-            android:id="@+id/google_sign_out"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="LOGOUT"/>
-    </LinearLayout>
-
 </LinearLayout>
 

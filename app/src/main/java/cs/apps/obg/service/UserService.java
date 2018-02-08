@@ -17,6 +17,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import cs.apps.obg.domain.UserScoreVO;
 import cs.apps.obg.inter.LoadUserCallback;
 
@@ -28,12 +31,15 @@ public class UserService extends Service{
     private final IBinder mBinder = new UserServiceBinder();
     private FirebaseDatabase database;
     private DatabaseReference myRef;
-    private DatabaseReference myScroeRef;
+    private DatabaseReference flagRef;
+    private DatabaseReference capitalRef;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private static String mUID;
     private static String mNickname;
-    private static UserScoreVO userScoreVO = new UserScoreVO();
+    //private static UserScoreVO userScoreVO = new UserScoreVO();
+    private static Map<String, Integer> scoreFlagMap = new HashMap<>();
+    private static Map<String, Integer> scoreCapitalMap = new HashMap<>();
     public class UserServiceBinder extends Binder {
         public UserService getService(){
             return UserService.this;
@@ -46,9 +52,14 @@ public class UserService extends Service{
         database = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
-        mUID = mUser.getUid();
+        if (mUser != null) {
+            mUID = mUser.getUid();
+        }
         myRef = database.getReference("saving-data/users/"+mUID+"/user/information");
-        myScroeRef = database.getReference("saving-data/users/"+mUID+"/score/flag_store");
+        flagRef = database.getReference("saving-data/users/"+mUID+"/score/flag_store");
+        capitalRef = database.getReference("saving-data/users/"+mUID+"/score/capital_store");
+        setFlagScore();
+        setCapitalScore();
     }
     @Nullable
     @Override
@@ -98,12 +109,13 @@ public class UserService extends Service{
         return mUID;
     }
 
-    public void getUserScore() {
+    public void setFlagScore() {
         System.out.println("getUserScore()");
-        myScroeRef.addChildEventListener(new ChildEventListener() {
+        flagRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 System.out.println(dataSnapshot.getKey() + " : " + dataSnapshot.getValue());
+                scoreFlagMap.put(dataSnapshot.getKey(), Integer.parseInt(dataSnapshot.getValue().toString()));
             }
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
@@ -122,6 +134,43 @@ public class UserService extends Service{
 
             }
         });
+    }
+    public void setCapitalScore() {
+        capitalRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                System.out.println(dataSnapshot.getKey() + " : " + dataSnapshot.getValue());
+                scoreCapitalMap.put(dataSnapshot.getKey(), Integer.parseInt(dataSnapshot.getValue().toString()));
+            }
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public Map<String, Integer> getFlagMap() {
+        return scoreFlagMap;
+    }
+    public Map<String, Integer> getCapitalMap() {
+        return scoreCapitalMap;
+    }
+
+    public void setScoreMap() {
+        setFlagScore();
+        setCapitalScore();
     }
     public void getTest() {
         System.out.println("Service TEST");
