@@ -1,5 +1,6 @@
 package cs.apps.obg.service;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -76,6 +77,18 @@ public class UserServiceInterface {
     public void setScoreMap() {
         if (mService != null) {
             mService.setScoreMap();
+        }
+    }
+
+    public void progressOn(Activity activity) {
+        if (mService != null) {
+            mService.progressOn(activity);
+        }
+    }
+
+    public void progressOff() {
+        if (mService != null) {
+            mService.progressOff();
         }
     }
 }

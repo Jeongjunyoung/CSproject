@@ -9,8 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -18,6 +18,11 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -25,6 +30,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 import cs.apps.obg.R;
-import cs.apps.obg.adapter.RankAdapter;
+import cs.apps.obg.adapter.RankingAdapter;
 import cs.apps.obg.database.DBHelper;
 import cs.apps.obg.domain.FlagVO;
 import cs.apps.obg.domain.RankingScoreVO;
@@ -44,15 +51,12 @@ import cs.apps.obg.service.UserApplication;
 public class FlagActivity extends AppCompatActivity implements View.OnClickListener{
     private FirebaseDatabase database;
     private DatabaseReference myRef;
-    private FirebaseAuth mAuth;
-    private FirebaseUser mUser;
-    private ChildEventListener mChildEventListener;
-    private static final String TAG = "Flag";
-    private String mUserUID;
+    private InterstitialAd mInterstitialAd;
     ImageView flagImage;
     LinearLayout rankingLayout, readyLayout;
     Button contents1, contents2, contents3, contents4, flagStart, flagBack, flagRestart, flagOut;
-    TextView goodAnswer, badAnswer, flagScore, flagTimer, flagCapital, highestScoreText, newHighestText;
+    TextView goodAnswer, badAnswer, flagScore, flagTimer, flagCapital,
+            highestScoreText, viewHighestScore, playingHighest, playingScore, rankingNumText;
     Spinner mSpinner;
     RecyclerView recyclerView;
     private int[] orderArr;
@@ -63,15 +67,16 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
     int goodNum = 0;
     int badNum = 0;
     private int fTotalNum;
+    private long viewScore;
     private String flagAnswer, db_rankingKinds;
     private boolean isTimeOut = false;
     private boolean isFlagQuiz;
     private int timeNum;
-    private int continentNum;
+    private int continentNum, frontAdCount;
     private ArrayList<FlagVO> list = new ArrayList<>();
     TimerRunnable handler;
     TimerUpdate thread;
-    private RankAdapter rankAdapter;
+    private RankingAdapter rankAdapter;
     DBHelper dbHelper;
     private Map<String, Integer> scoreMap;
     @Override
@@ -84,30 +89,26 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mChildEventListener != null) {
-            myRef.removeEventListener(mChildEventListener);
-        }
     }
 
     private void initView() {
+        MobileAds.initialize(getApplicationContext(), getResources().getString(R.string.banner_ad_unit_id));
+        AdView mAdView = (AdView) findViewById(R.id.flag_adview);
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+        mAdView.loadAd(adRequest);
+        setFrontAd();
         Intent intent = getIntent();
         isFlagQuiz = intent.getBooleanExtra("flag_quiz", false);
-        if (isFlagQuiz) {
-            db_rankingKinds = "saving-data/ranking_flag";
-            scoreMap = UserApplication.getInstance().getServiceInterface().getFlagMap();
-        } else {
-            db_rankingKinds = "saving-data/ranking_capital";
-            scoreMap = UserApplication.getInstance().getServiceInterface().getCapitalMap();
-        }
-        System.out.println("MAP >>> Europe Score : " + scoreMap.get("flag_europe_store"));
+        setScore();
+        //System.out.println("MAP >>> Europe Score : " + scoreMap.get("flag_europe_store"));
         recyclerView = (RecyclerView) findViewById(R.id.ranking_list);
-        rankAdapter = new RankAdapter(this);
+        rankAdapter = new RankingAdapter(this);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(rankAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("saving-data/users");
-        mAuth = FirebaseAuth.getInstance();
         //mUser = mAuth.getCurrentUser();
         //println("E-MAIL : "+mUser.getEmail()+", UID : "+mUser.getUid());
         UserApplication.getInstance().getServiceInterface().setUser();
@@ -129,7 +130,10 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
         flagScore = (TextView) findViewById(R.id.flag_score);
         flagCapital = (TextView) findViewById(R.id.flag_capital);
         highestScoreText = (TextView) findViewById(R.id.flag_highest_score);
-        //newHighestText = (TextView) findViewById(R.id.new_highest_score);
+        viewHighestScore = (TextView) findViewById(R.id.view_highest_score);
+        playingHighest = (TextView) findViewById(R.id.playing_quiz_highest);
+        playingScore = (TextView) findViewById(R.id.playing_quiz_score);
+        rankingNumText = (TextView) findViewById(R.id.flag_ranking_text);
         rankingLayout = (LinearLayout) findViewById(R.id.flag_ranking_layout);
         readyLayout = (LinearLayout) findViewById(R.id.flag_ready_layout);
         if (isFlagQuiz) {
@@ -138,6 +142,24 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
             flagCapital.setVisibility(View.VISIBLE);
         }
         mSpinner = (Spinner) findViewById(R.id.flag_continent_spinner);
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                ((TextView) adapterView.getChildAt(0)).setTextColor(Color.WHITE);
+                String str = "";
+                if (scoreMap.get(getContinentString(mSpinner.getSelectedItemPosition())) != null) {
+                    str = scoreMap.get(getContinentString(mSpinner.getSelectedItemPosition())).toString();
+                } else {
+                    str = "0";
+                }
+                viewHighestScore.setText(str);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
         ArrayAdapter spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.continent,android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(spinnerAdapter);
@@ -175,11 +197,15 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
                 continentNum = mSpinner.getSelectedItemPosition();
                 list = dbHelper.selectData(continentNum);
                 fTotalNum = list.size();
-                System.out.println("MAP >>> Europe Score : " + scoreMap.get(getContinentString(continentNum)));
+                if (scoreMap.get(getContinentString(continentNum)) == null) {
+                    playingHighest.setText("0");
+                } else {
+                    playingHighest.setText(scoreMap.get(getContinentString(continentNum)).toString());
+                }
+                playingScore.setText("0");
                 orderArr = new int[fTotalNum];
                 for(int i=0;i<list.size();i++) {
                     int index = i+1;
-                    System.out.println("index : "+ index +"   country : "+ list.get(i).getCountry());
                     if (isFlagQuiz) {
                         flagMap.put(i, list.get(i).getCountry());
                     } else {
@@ -188,14 +214,17 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
                     countryMap.put(i, list.get(i).getCountry());
                     imageIds.add(list.get(i).getResId());
                 }
+
                 quizShuffle();
                 break;
             case R.id.flag_quiz_back:
+                finish();
                 break;
             case R.id.flag_restart:
+                setScore();
+                viewHighestScore.setText(scoreMap.get(getContinentString(mSpinner.getSelectedItemPosition())).toString());
                 rankingLayout.setVisibility(View.GONE);
                 readyLayout.setVisibility(View.VISIBLE);
-                newHighestText.setVisibility(View.GONE);
                 goodAnswer.setText(String.valueOf(0));
                 badAnswer.setText(String.valueOf(0));
                 isTimeOut = false;
@@ -209,14 +238,16 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
     private void checkAnswer(String answer) {
         if (answer.equals(flagAnswer)) {
             goodNum += 1;
+            viewScore += 1973;
             goodAnswer.setText(String.valueOf(goodNum));
         } else if (flagAnswer.equals("END")) {
 
         } else {
             badNum += 1;
+            viewScore -= 572;
             badAnswer.setText(String.valueOf(badNum));
         }
-
+        playingScore.setText(String.valueOf(viewScore));
         if (mPosition < orderArr.length) {
             setNextQuiz();
         } else {
@@ -275,6 +306,7 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
         }
         goodNum = 0;
         badNum = 0;
+        viewScore = 0;
         boolean isOverlap;
         for(int i=0; i<orderArr.length;i++) {
             random = (int) (Math.random() * fTotalNum) % fTotalNum;
@@ -288,9 +320,6 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
             if (isOverlap) {
                 orderArr[i] = random;
             }
-        }
-        for(int i=0;i<orderArr.length;i++) {
-            System.out.println("orderArr["+i+"] : " + String.valueOf(orderArr[i]));
         }
         thread = new TimerUpdate();
         thread.start();
@@ -345,18 +374,16 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
         if (rankingLayout.getVisibility() == View.VISIBLE) {
             finish();
         } else {
-            thread.interrupt();
+            if (thread != null) {
+                thread.interrupt();
+            }
             finish();
             super.onBackPressed();
         }
     }
 
     private long getMaxScore() {
-        if (isFlagQuiz) {
-            scoreMap = UserApplication.getInstance().getServiceInterface().getFlagMap();
-        } else {
-            scoreMap = UserApplication.getInstance().getServiceInterface().getCapitalMap();
-        }
+        setScore();
         if (scoreMap.get(getContinentString(continentNum)) == null) {
             return 0;
         }
@@ -367,20 +394,23 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
         long updateScore = 0;
         if (score > highestScore) {
             updateScore = score;
-            //newHighestText.setVisibility(View.VISIBLE);
         } else if (score <= highestScore) {
             updateScore = highestScore;
         }
         return updateScore;
     }
     private void resultScore(int goodScore, int badScore) {
-        long score = (goodScore*1573) - (badScore*372);
+        long score = (goodScore*1973) - (badScore*572);
         if (score < 0) {
             score = 0;
         }
         long highestScore = getMaxScore();
         long updateScore = checkMaxScore(score, highestScore);
-        highestScoreText.setText(String.valueOf(highestScore));
+        if (score > highestScore) {
+            highestScoreText.setText("NEW RECORD");
+        } else {
+            highestScoreText.setText(String.valueOf(highestScore));
+        }
         flagScore.setText(String.valueOf(score));
         DatabaseReference ref = database.getReference(db_rankingKinds);
         if (isFlagQuiz) {
@@ -399,12 +429,27 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
             }
             @Override
             public void onRankLoaded(List<RankingScoreVO> list) {
-                rankAdapter.setItems(list);
-                System.out.println(list.size());
-                System.out.println("Size : "+rankAdapter.getItemCount()+" 1 item add Success");
+                int index = 0;
+                for(int i=0;i<list.size();i++) {
+                    if (list.get(i).getNickName().equals(UserApplication.getInstance().getServiceInterface().getNickname())) {
+                        rankingNumText.setText(String.valueOf(index+1));
+                    }
+                }
+                List<RankingScoreVO> mList = new ArrayList<>();
+                if (mList.size() > 15) {
+                    index = 15;
+                } else {
+                    index = list.size();
+                }
+                for(int i=0;i<index;i++) {
+                    mList.add(list.get(i));
+                }
+                rankAdapter.setItems(mList);
                 rankAdapter.notifyDataSetChanged();
             }
         });
+        UserApplication.getInstance().getServiceInterface().setScoreMap();
+        showFrontAd();
     }
 
     private String getContinentString(int position) {
@@ -432,7 +477,6 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
                     vo.setNickName(snapshot.getKey());
                     vo.setScore(snapshot.getValue().toString());
                     list.add(vo);
-                    System.out.println(snapshot.getKey() + " : " + snapshot.getValue());
                 }
                 Collections.sort(list, new RankingComparator());
                 callback.onRankLoaded(list);
@@ -462,6 +506,41 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
             int score1 = Integer.parseInt(vo1.getScore());
             int score2 = Integer.parseInt(vo2.getScore());
             return score1 > score2 ? -1 : score1 < score2 ? 1 : 0;
+        }
+    }
+    private void setScore() {
+        if (isFlagQuiz) {
+            db_rankingKinds = "saving-data/ranking_flag";
+            scoreMap = UserApplication.getInstance().getServiceInterface().getFlagMap();
+        } else {
+            db_rankingKinds = "saving-data/ranking_capital";
+            scoreMap = UserApplication.getInstance().getServiceInterface().getCapitalMap();
+        }
+    }
+
+    private void setFrontAd() {
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getResources().getString(R.string.frond_ad_unit_id));
+        AdRequest adRequest = new AdRequest.Builder()
+                //.addTestDevice("B3EEABB8EE11C2BE770B684D95219ECB")
+                .build();
+        mInterstitialAd.loadAd(adRequest);
+        mInterstitialAd.setAdListener(new AdListener(){
+            @Override
+            public void onAdClosed() {
+                AdRequest adRequest1 = new AdRequest.Builder()
+                        //.addTestDevice("B3EEABB8EE11C2BE770B684D95219ECB")
+                        .build();
+                mInterstitialAd.loadAd(adRequest1);
+            }
+        });
+    }
+
+    public void showFrontAd() {
+        frontAdCount++;
+        if (frontAdCount > 2 && mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+            frontAdCount = 0;
         }
     }
 }

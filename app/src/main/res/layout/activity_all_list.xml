@@ -5,7 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     tools:context="cs.apps.obg.activity.AllListActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1">
     <LinearLayout
         android:id="@+id/list_detail_layout"
         android:layout_width="match_parent"
@@ -51,7 +57,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Continent"
+                    android:text="대륙"
                     android:textSize="25dp"
                     android:gravity="center"
                     android:layout_weight="1"/>
@@ -73,7 +79,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Country"
+                    android:text="국가"
                     android:textSize="25dp"
                     android:gravity="center"
                     android:layout_weight="1"/>
@@ -94,7 +100,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Capital"
+                    android:text="수도"
                     android:textSize="25dp"
                     android:gravity="center"
                     android:layout_weight="1"/>
@@ -163,19 +169,27 @@
             android:divider="@android:color/transparent"
             android:dividerHeight="0dp" />
         <!--
-
         <View
-
             android:id="@+id/drawer"
-
             android:layout_width="240dp"
-
             android:layout_height="match_parent"
-
             android:layout_gravity="start"
-
             android:background="#3F51B5" />
 
         -->
     </android.support.v4.widget.DrawerLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/all_list_adview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            ads:adSize="BANNER"
+            ads:adUnitId="@string/banner_ad_unit_id">
+        </com.google.android.gms.ads.AdView>
+    </LinearLayout>
 </LinearLayout>

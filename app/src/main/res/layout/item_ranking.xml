@@ -6,9 +6,11 @@
     android:descendantFocusability="blocksDescendants"
     android:orientation="vertical">
     <LinearLayout
+        android:id="@+id/ranking_item_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:background="#4b4a4a"
         android:orientation="horizontal">
         <TextView
             android:id="@+id/rank_ranking"

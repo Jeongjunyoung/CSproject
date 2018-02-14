@@ -5,7 +5,13 @@
     android:layout_height="match_parent"
     tools:context="cs.apps.obg.activity.FlagActivity"
     android:orientation="vertical"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:background="#d9e4de">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1">
     <LinearLayout
         android:id="@+id/flag_ready_layout"
         android:layout_width="match_parent"
@@ -21,10 +27,34 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Choose Continent"
+                android:text="대륙 선택"
                 android:textSize="50dp"
                 android:textColor="#1b1b1b"
                 android:gravity="center"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:background="@drawable/zlayout_border">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="30dp"
+                android:text="최고기록"/>
+            <TextView
+                android:id="@+id/view_highest_score"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#d26767"
+                android:textSize="30dp"
+                android:text="SCORE"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="300dp"
@@ -37,9 +67,9 @@
                 android:id="@+id/flag_continent_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_marginBottom="50dp">
+                android:layout_marginBottom="50dp"
+                android:background="@drawable/zspinner_border"
+                android:spinnerMode="dropdown">
             </Spinner>
             <Button
                 android:id="@+id/flag_quiz_start"
@@ -103,12 +133,36 @@
             <TextView
                 android:id="@+id/flag_highest_score"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:layout_gravity="center"
                 android:text="TEXT"
                 android:textColor="#fd2542"
                 android:textSize="30dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="Ranking"
+                    android:textColor="#fd2542"
+                    android:layout_weight="1"
+                    android:textSize="23dp" />
+                <TextView
+                    android:id="@+id/flag_ranking_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="1"
+                    android:textColor="#fd2542"
+                    android:layout_weight="1"
+                    android:textSize="25dp" />
+            </LinearLayout>
 
         </LinearLayout>
         <LinearLayout
@@ -184,50 +238,77 @@
 
         </LinearLayout>
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_weight="1">
-        <TextView
-            android:id="@+id/good_answer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="0"
-            android:textSize="30dp"
-            android:textColor="#5aa972"
-            android:layout_weight="1"/>
-        <TextView
-            android:id="@+id/flag_timer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="20"
-            android:textSize="30dp"
-            android:textColor="#7fa3c9"
-            android:layout_weight="1"/>
-        <TextView
-            android:id="@+id/bad_answer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="0"
-            android:textColor="#c1f44b34"
-            android:textSize="30dp"
-            android:layout_weight="1"/>
-    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="26dp">
+            <TextView
+                android:id="@+id/playing_quiz_highest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:textColor="#fd2542"
+                android:text="0"
+                android:textSize="30dp"/>
+            <TextView
+                android:id="@+id/playing_quiz_score"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="#3a8c41"
+                android:text="0"
+                android:textSize="30dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:background="@drawable/zlayout_border">
+            <TextView
+                android:id="@+id/good_answer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="0"
+                android:textSize="30dp"
+                android:textColor="#5aa972"
+                android:layout_weight="1"/>
+            <TextView
+                android:id="@+id/flag_timer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="0"
+                android:textSize="30dp"
+                android:textColor="#7fa3c9"
+                android:layout_weight="1"/>
+            <TextView
+                android:id="@+id/bad_answer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="#c1f44b34"
+                android:textSize="30dp"
+                android:layout_weight="1"/>
+        </LinearLayout>
         <ImageView
             android:id="@+id/flag_image"
-            android:layout_width="220dp"
-            android:layout_height="150dp"
+            android:layout_width="210dp"
+            android:layout_height="130dp"
             android:layout_gravity="center"
-            android:src="@drawable/flag3_"/>
+            android:src="@drawable/flag3_"
+            android:layout_marginTop="11dp"/>
         <TextView
             android:id="@+id/flag_capital"
             android:layout_width="match_parent"
@@ -236,26 +317,29 @@
             android:gravity="center"
             android:textSize="33dp"
             android:textColor="#232323"
-            android:text="Captial"/>
+            android:text="Capital"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="290dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center"
+        android:gravity="center"
         android:layout_weight="2">
         <Button
             android:id="@+id/flag_contents1"
             android:layout_width="match_parent"
-            android:layout_height="39dp"
+            android:layout_height="38dp"
             android:textAllCaps="false"
+            android:textSize="23dp"
             android:text="TEXT"
             android:background="@drawable/zbutton_shape"
             android:layout_marginBottom="9dp"/>
         <Button
             android:id="@+id/flag_contents2"
             android:layout_width="match_parent"
-            android:layout_height="39dp"
+            android:layout_height="38dp"
+            android:textSize="23dp"
             android:textAllCaps="false"
             android:text="TEXT"
             android:background="@drawable/zbutton_shape"
@@ -263,7 +347,8 @@
         <Button
             android:id="@+id/flag_contents3"
             android:layout_width="match_parent"
-            android:layout_height="39dp"
+            android:layout_height="38dp"
+            android:textSize="23dp"
             android:textAllCaps="false"
             android:text="TEXT"
             android:background="@drawable/zbutton_shape"
@@ -271,10 +356,25 @@
         <Button
             android:id="@+id/flag_contents4"
             android:layout_width="match_parent"
-            android:layout_height="39dp"
+            android:layout_height="38dp"
+            android:textSize="23dp"
             android:textAllCaps="false"
             android:text="TEXT"
             android:background="@drawable/zbutton_shape"
             android:layout_marginBottom="9dp"/>
+    </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/flag_adview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            ads:adSize="BANNER"
+            ads:adUnitId="@string/banner_ad_unit_id">
+        </com.google.android.gms.ads.AdView>
     </LinearLayout>
 </LinearLayout>

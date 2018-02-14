@@ -79,7 +79,7 @@ public class DBHelper {
             sqLiteDatabase.execSQL("insert into cs_flag(country, continent, capital, res_id, coninent_num, country_kr, capital_kr) values('Malta', 1, 'Valletta',0x7f070083, 1,'몰타','발레타')");
             sqLiteDatabase.execSQL("insert into cs_flag(country, continent, capital, res_id, coninent_num, country_kr, capital_kr) values('Moldova', 1, 'Chișinău',0x7f070084, 1,'몰도바','키시너우')");
             sqLiteDatabase.execSQL("insert into cs_flag(country, continent, capital, res_id, coninent_num, country_kr, capital_kr) values('Monaco', 1, 'Monaco',0x7f070085, 1,'모나코','모나코')");
-            sqLiteDatabase.execSQL("insert into cs_flag(country, continent, capital, res_id, coninent_num, country_kr, capital_kr) values('Montenegro', 1, 'Podgorica',0x7f070086, 1,'몬테네그로','포드고리차'");
+            sqLiteDatabase.execSQL("insert into cs_flag(country, continent, capital, res_id, coninent_num, country_kr, capital_kr) values('Montenegro', 1, 'Podgorica',0x7f070086, 1,'몬테네그로','포드고리차')");
             sqLiteDatabase.execSQL("insert into cs_flag(country, continent, capital, res_id, coninent_num, country_kr, capital_kr) values('Netherlands', 1, 'Amsterdam',0x7f070087, 1,'네덜란드','암스테르담')");
             sqLiteDatabase.execSQL("insert into cs_flag(country, continent, capital, res_id, coninent_num, country_kr, capital_kr) values('Norway', 1, 'Oslo',0x7f070088, 1,'노르웨이','오슬로')");
             sqLiteDatabase.execSQL("insert into cs_flag(country, continent, capital, res_id, coninent_num, country_kr, capital_kr) values('Poland', 1, ' Warsaw',0x7f070089, 1,'폴란드','바르샤바')");
@@ -249,9 +249,9 @@ public class DBHelper {
         FlagVO vo = null;
         String sql = "";
         if (continentNum == 0) {
-            sql = "select _id, country, continent, capital, res_id from cs_flag";
+            sql = "select _id, country_kr, continent, capital_kr, res_id from cs_flag";
         } else {
-            sql = "select _id, country, continent, capital, res_id from cs_flag where continent = "+continentNum;
+            sql = "select _id, country_kr, continent, capital_kr, res_id from cs_flag where continent = "+continentNum;
         }
         Cursor cursor =  db.rawQuery(sql, null);
         for(int i = 0;i<cursor.getCount(); i++) {
@@ -270,7 +270,7 @@ public class DBHelper {
     public ArrayList<FlagVO> selectAllData(int continentNum) {
         ArrayList<FlagVO> list = new ArrayList<>();
         FlagVO vo = null;
-        String sql = "select _id, country, continent, capital, res_id, coninent_num from cs_flag where coninent_num =" + continentNum;
+        String sql = "select _id, country_kr, continent, capital_kr, res_id, coninent_num from cs_flag where coninent_num =" + continentNum;
         Cursor cursor = db.rawQuery(sql, null);
         for(int i = 0;i<cursor.getCount(); i++) {
             cursor.moveToNext();

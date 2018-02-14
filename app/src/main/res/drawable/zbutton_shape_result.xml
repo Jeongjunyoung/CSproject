@@ -8,7 +8,7 @@
         android:bottomRightRadius="5dp"
         />
     <solid
-        android:color="#202020"
+        android:color="#383737"
         />
     <padding
         android:left="0dp"

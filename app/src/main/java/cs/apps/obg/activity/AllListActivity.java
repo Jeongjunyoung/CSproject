@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,11 +21,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -56,9 +56,13 @@ public class AllListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_list);
+        MobileAds.initialize(getApplicationContext(), getResources().getString(R.string.banner_ad_unit_id));
+        AdView mAdView = (AdView) findViewById(R.id.all_list_adview);
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+        mAdView.loadAd(adRequest);
         db = new DBHelper(this);
         db.open();
-        //mAdapter = new ListAdapter();
         navList = (ListView) findViewById(R.id.lv_activity_main_nav_list);
         flContainer = (FrameLayout) findViewById(R.id.container);
         setRecyclerView();
@@ -98,7 +102,7 @@ public class AllListActivity extends AppCompatActivity {
         mAdapter.setItemClick(new ListAdapter.ItemClick() {
             @Override
             public void onClick(View view, int position) {
-                Log.d("AA", mItems.get(position).getCapital());
+                //Log.d("AA", mItems.get(position).getCapital());
                 detailLayout.setVisibility(View.VISIBLE);
                 detailCapital.setText(mItems.get(position).getCapital());
                 detailContinent.setText(getContinentString(mItems.get(position).getContinentNum()));
@@ -172,17 +176,17 @@ public class AllListActivity extends AppCompatActivity {
     private String getContinentString(int position) {
         String str = "";
         if (position == 1) {
-            str = "Europe";
+            str = "유럽";
         } else if (position == 2) {
-            str = "Asia";
+            str = "아시아";
         } else if (position == 3) {
-            str = "Oceania";
+            str = "오세아니아";
         } else if (position == 4) {
-            str = "America";
+            str = "아메리카";
         } else if (position == 5) {
-            str = "Africa";
+            str = "아프리카";
         } else if (position == 6) {
-            str = "Middle East";
+            str = "중동";
         }
         return str;
     }
@@ -195,9 +199,4 @@ public class AllListActivity extends AppCompatActivity {
             finish();
         }
     }
-
-    public void println(String str) {
-        Log.d("AA",str);
-    }
-
 }

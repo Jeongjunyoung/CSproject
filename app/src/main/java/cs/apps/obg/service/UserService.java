@@ -1,10 +1,16 @@
 package cs.apps.obg.service;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatDialog;
+import android.widget.ImageView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.AuthCredential;
@@ -20,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Map;
 
+import cs.apps.obg.R;
 import cs.apps.obg.domain.UserScoreVO;
 import cs.apps.obg.inter.LoadUserCallback;
 
@@ -35,11 +42,12 @@ public class UserService extends Service{
     private DatabaseReference capitalRef;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
-    private static String mUID;
-    private static String mNickname;
+    private String mUID;
+    private String mNickname;
     //private static UserScoreVO userScoreVO = new UserScoreVO();
-    private static Map<String, Integer> scoreFlagMap = new HashMap<>();
-    private static Map<String, Integer> scoreCapitalMap = new HashMap<>();
+    private Map<String, Integer> scoreFlagMap = new HashMap<>();
+    private Map<String, Integer> scoreCapitalMap = new HashMap<>();
+    AppCompatDialog progressDialog;
     public class UserServiceBinder extends Binder {
         public UserService getService(){
             return UserService.this;
@@ -171,6 +179,26 @@ public class UserService extends Service{
     public void setScoreMap() {
         setFlagScore();
         setCapitalScore();
+    }
+    public void progressOn(Activity activity) {
+        progressDialog = new AppCompatDialog(activity);
+        progressDialog.setCancelable(false);
+        progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        progressDialog.setContentView(R.layout.login_dialog);
+        progressDialog.show();
+        final ImageView loadingImage = (ImageView) progressDialog.findViewById(R.id.frame_loading);
+        final AnimationDrawable frameAnimation = (AnimationDrawable) loadingImage.getBackground();
+        loadingImage.post(new Runnable() {
+            @Override
+            public void run() {
+                frameAnimation.start();
+            }
+        });
+    }
+    public void progressOff() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
     public void getTest() {
         System.out.println("Service TEST");
