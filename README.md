@@ -3,8 +3,8 @@
 
 스크린샷
 ==========
-<div>
-  <p><<로그인 화면>>></p>
+**로그인 화면**
+<div style="float:center;">
   <img width="350" height="550" src="https://user-images.githubusercontent.com/18605138/46819265-42067580-cdbe-11e8-96c4-3764e0038b10.PNG">
   
 </div>
