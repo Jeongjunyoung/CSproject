@@ -11,6 +11,8 @@
 #####   Google, E-mail 로그인 
 #####   사용기능 : Firebase Authentication
 
+
+
 >**순위표 화면**
 <div>
   <img width="250" height="400" src="https://user-images.githubusercontent.com/18605138/46819600-1df76400-cdbf-11e8-9aef-7f6fed0ddd82.PNG">
