@@ -5,6 +5,7 @@
 ==========
 **로그인 화면**
 <div style="float:center;">
-  <img width="350" height="550" src="https://user-images.githubusercontent.com/18605138/46819265-42067580-cdbe-11e8-96c4-3764e0038b10.PNG">
-  
+  <img width="300" height="500" src="https://user-images.githubusercontent.com/18605138/46819265-42067580-cdbe-11e8-96c4-3764e0038b10.PNG">
+  <p>Google, E-mail 로그인 </p>
 </div>
+**사용기능** : **Firebase Authentication**
