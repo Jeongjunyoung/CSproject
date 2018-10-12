@@ -13,12 +13,12 @@
 Firebase 구글 로그인
 ```java
 if (requestCode == RC_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if (result.isSuccess()) {
-                GoogleSignInAccount account = result.getSignInAccount();
-                firebaseAuthWithGoogle(account);
-            }
-        }
+    GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+    if (result.isSuccess()) {
+        GoogleSignInAccount account = result.getSignInAccount();
+        firebaseAuthWithGoogle(account);
+    }
+}
 ```
 
 
@@ -32,10 +32,10 @@ if (requestCode == RC_SIGN_IN) {
 국기 퀴즈 점수 등록
 ```java
 myRef.child(UserApplication.getInstance().getServiceInterface().getUID())
-                    .child("score").child("flag_store").child(getContinentString(continentNum)).setValue(updateScore);
+           .child("score").child("flag_store").child(getContinentString(continentNum)).setValue(updateScore);
 ```
 수도 퀴즈 점수 등록
 ```java
 myRef.child(UserApplication.getInstance().getServiceInterface().getUID())
-                    .child("score").child("capital_store").child(getContinentString(continentNum)).setValue(updateScore);
+           .child("score").child("capital_store").child(getContinentString(continentNum)).setValue(updateScore);
 ```
