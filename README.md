@@ -11,6 +11,9 @@
 #####   Google, E-mail 로그인 
 #####   사용기능 : Firebase Authentication
 
+```java
+
+```
 
 
 >**순위표 화면**
@@ -20,3 +23,13 @@
 
 #####   유저간 순위표 기능
 #####   사용기능 : Firebase RealtimeDatabase
+국기 퀴즈 점수 등록
+```java
+myRef.child(UserApplication.getInstance().getServiceInterface().getUID())
+                    .child("score").child("flag_store").child(getContinentString(continentNum)).setValue(updateScore);
+```
+수도 퀴즈 점수 등록
+```java
+myRef.child(UserApplication.getInstance().getServiceInterface().getUID())
+                    .child("score").child("capital_store").child(getContinentString(continentNum)).setValue(updateScore);
+```
