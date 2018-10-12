@@ -56,7 +56,7 @@ public class CSActivity extends ProgressActivity{
     private EditText nicknameText, guestEmail, guestPassword;
     private Button nicknameConfirm, guestSignInBtn;
     private TextView loginText;
-    private ProgressDialog progressDialog;
+//    private ProgressDialog progressDialog;
     //private CallbackManager mCallbackManager;
     //private boolean isNewUser  = true;
     @Override
@@ -146,9 +146,13 @@ public class CSActivity extends ProgressActivity{
             @Override
             public void onClick(View view) {
                 String nickName = nicknameText.getText().toString();
-                user.put("information", new UserVO(mUser.getEmail(), nickName));
-                userRef.child(mUser.getUid()).child("user").setValue(user);
-                setNicknameLayout.setVisibility(View.GONE);
+                if (nickName.equals("")) {
+                    Toast.makeText(CSActivity.this, "닉네임을 입력하세요.", Toast.LENGTH_SHORT).show();
+                } else {
+                    user.put("information", new UserVO(mUser.getEmail(), nickName));
+                    userRef.child(mUser.getUid()).child("user").setValue(user);
+                    setNicknameLayout.setVisibility(View.GONE);
+                }
             }
         });
         googleSignInBtn.setOnClickListener(new View.OnClickListener() {
@@ -220,17 +224,17 @@ public class CSActivity extends ProgressActivity{
                     }
                 });
     }
-    private void getUser(@NonNull final String userUid){
+    private void getUser(@NonNull final String userUid){ // 유저 정보 가져오기
         database.getReference("saving-data/users").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(userUid)) {
+                if (dataSnapshot.hasChild(userUid)) { // 기존 유저
                     Log.d("CSA", "getUser 호출");
                     UserVO vo = dataSnapshot.child(userUid).child("user").child("information").getValue(UserVO.class);
                     UserApplication.getInstance().getServiceInterface().setUser();
                     UserApplication.getInstance().getServiceInterface().setScoreMap();
-                } else {
-                    setNicknameLayout.setVisibility(View.VISIBLE);
+                } else { // 신규 유저
+                    setNicknameLayout.setVisibility(View.VISIBLE); // 닉네임 설정창 띄우기
                 }
             }
 
@@ -240,17 +244,7 @@ public class CSActivity extends ProgressActivity{
             }
         });
     }
-    private void signOut() {
-        mAuth.signOut();
-        mGoogleSignInClient.revokeAccess().addOnCompleteListener(this, new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                loginLayout.setVisibility(View.VISIBLE);
-                Toast.makeText(getApplicationContext(), "Logout Success", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-    private void createUser(final String email, final String password) {
+    private void createUser(final String email, final String password) { // 유저 생성
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -265,8 +259,7 @@ public class CSActivity extends ProgressActivity{
                 });
 
     }
-
-    private void guestLogin(String email, String password) {
+    private void guestLogin(String email, String password) { // 게스트 로그인
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -296,5 +289,15 @@ public class CSActivity extends ProgressActivity{
             loginText.setVisibility(View.GONE);
             guestLoginLayout.setVisibility(View.VISIBLE);
         }
+    }
+    private void signOut() { // 로그아웃
+        mAuth.signOut();
+        mGoogleSignInClient.revokeAccess().addOnCompleteListener(this, new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                loginLayout.setVisibility(View.VISIBLE);
+                Toast.makeText(getApplicationContext(), "Logout Success", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

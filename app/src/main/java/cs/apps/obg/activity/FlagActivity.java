@@ -173,6 +173,7 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
         flagOut.setOnClickListener(this);
         handler = new TimerRunnable();
     }
+    @SuppressLint("SetTextI18n")
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -235,7 +236,7 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void checkAnswer(String answer) {
+    private void checkAnswer(String answer) {//정답 확인
         if (answer.equals(flagAnswer)) {
             goodNum += 1;
             viewScore += 1973;
@@ -257,7 +258,7 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @SuppressLint("ResourceType")
-    private void setNextQuiz() {
+    private void setNextQuiz() { //다음 퀴즈
         int[] contentsArr = shakeNum(orderArr[mPosition]);
         flagAnswer = flagMap.get(orderArr[mPosition]);
         flagCapital.setText(countryMap.get(orderArr[mPosition]));
@@ -268,7 +269,7 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
         flagImage.setImageResource(imageIds.get(orderArr[mPosition]));
         mPosition += 1;
     }
-    private int[] shakeNum(int position) {
+    private int[] shakeNum(int position) { //문항 섞기
         int[] contentsArr = new int[4];
         boolean isOverlap;
         contentsArr[0] = position;
@@ -432,7 +433,7 @@ public class FlagActivity extends AppCompatActivity implements View.OnClickListe
                 int index = 0;
                 for(int i=0;i<list.size();i++) {
                     if (list.get(i).getNickName().equals(UserApplication.getInstance().getServiceInterface().getNickname())) {
-                        rankingNumText.setText(String.valueOf(index+1));
+                        rankingNumText.setText(String.valueOf(i+1));
                     }
                 }
                 List<RankingScoreVO> mList = new ArrayList<>();

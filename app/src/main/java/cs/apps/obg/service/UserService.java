@@ -75,13 +75,12 @@ public class UserService extends Service{
         return mBinder;
     }
 
-    public void getUserNickname() {
+    public void getUserNickname() { //유저 닉네임 가져오기
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 if (dataSnapshot.getKey().equals("nick_name")) {
                     System.out.println("getUserNickName() : "+dataSnapshot.getKey() + " : " + dataSnapshot.getValue());
-                    //callback.onUserLoaded(dataSnapshot.getValue().toString());
                     mNickname = dataSnapshot.getValue().toString();
                 }
             }
@@ -117,7 +116,7 @@ public class UserService extends Service{
         return mUID;
     }
 
-    public void setFlagScore() {
+    public void setFlagScore() { //국기 퀴즈 점수
         System.out.println("getUserScore()");
         flagRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -143,7 +142,7 @@ public class UserService extends Service{
             }
         });
     }
-    public void setCapitalScore() {
+    public void setCapitalScore() { //수도 퀴즈 점수
         capitalRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
