@@ -10,9 +10,15 @@
 
 #####   Google, E-mail 로그인 
 #####   사용기능 : Firebase Authentication
-
+Firebase 구글 로그인
 ```java
-
+if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                GoogleSignInAccount account = result.getSignInAccount();
+                firebaseAuthWithGoogle(account);
+            }
+        }
 ```
 
 
